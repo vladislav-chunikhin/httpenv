@@ -29,7 +29,25 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Docker meta
+      - name: Build and export to Docker
+        uses: docker/build-push-action@v5
+        with:
+          push: false
+          load: true # Export to Docker Engine rather than pushing to a registry
+          tags: ${{ github.run_id }}
+          target: test
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          platforms: linux/amd64
+
+      - name: Run Trivy for all CVEs (non-blocking)
+        uses: aquasecurity/trivy-action@0.13.1
+        with:
+          image-ref: ${{ github.run_id }}
+          exit-code: 0
+          format: table
+
+      - name: Docker Metadata for Final Image Build
         id: docker_meta
         uses: docker/metadata-action@v5
         with:
@@ -37,13 +55,14 @@ jobs:
           flavor: |
             latest=false
           tags: |
-            type=raw,value=test
-            type=raw,value=latest,enable=${{ endsWith(github.ref, github.event.repository.default_branch) }}
-            type=ref,event=pr
-            type=ref,event=branch
-            type=semver,pattern={{version}}
+            type=raw,value=06
+          # comment these out on all but 04-add-metadata.yaml to avoid overwriting image tags
+          # type=raw,value=latest,enable=${{ endsWith(github.ref, github.event.repository.default_branch) }}
+          # type=ref,event=pr
+          # type=ref,event=branch
+          # type=semver,pattern={{version}}
 
-      - name: Docker build
+      - name: Docker Build and Push to Docker Hub
         uses: docker/build-push-action@v5
         with:
           push: true
