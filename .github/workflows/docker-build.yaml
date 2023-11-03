@@ -17,8 +17,8 @@ jobs:
 
     steps:
 
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
+#      - name: Set up QEMU
+#        uses: docker/setup-qemu-action@v3
 
 #      - name: Set up Docker Buildx
 #        uses: docker/setup-buildx-action@v3
@@ -51,7 +51,7 @@ jobs:
           labels: ${{ steps.docker_meta.outputs.labels }}
 #          cache-from: type=gha
 #          cache-to: type=gha,mode=max
-          platforms: linux/amd64,linux/arm64,linux/arm/v7
+#          platforms: linux/amd64,linux/arm64,linux/arm/v7
 
       - name: Find comment for image tags
         uses: peter-evans/find-comment@v2.4.0
