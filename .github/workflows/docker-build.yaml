@@ -44,6 +44,19 @@ jobs:
           cache-to: type=gha,mode=max
           platforms: linux/amd64
 
+        # for simple tests (npm test, etc.) just run a local image in docker
+      - name: Unit Testing in Docker
+        run: |
+          docker run --rm ${{ github.run_id }} echo "run test commands here"
+
+      - name: Run unit tests
+        run: go test -v ./...
+
+      - name: Test healthcheck in Docker Compose
+        run: |
+          export TESTING_IMAGE="${{ github.run_id }}"
+          docker compose -f docker-compose.test.yml up --exit-code-from sut
+
       - name: Run Trivy for all CVEs (non-blocking)
         uses: aquasecurity/trivy-action@0.13.1
         with:
@@ -76,7 +89,7 @@ jobs:
           flavor: |
             latest=false
           tags: |
-            type=raw,value=07
+            type=raw,value=09
           # comment these out on all but 04-add-metadata.yaml to avoid overwriting image tags
           # type=raw,value=latest,enable=${{ endsWith(github.ref, github.event.repository.default_branch) }}
           # type=ref,event=pr
