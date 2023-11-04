@@ -3,6 +3,7 @@ version: '3.8'
 services:
   myapp:
     image: "${TESTING_IMAGE}"
+
   postgres:
     image: postgres
     environment:
@@ -13,6 +14,7 @@ services:
     healthcheck:
       test: /healthchecks/postgres-healthcheck
       interval: "5s"
+
   sut:
     image: "${TESTING_IMAGE}"
     depends_on:

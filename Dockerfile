@@ -1,13 +1,23 @@
-FROM golang:alpine
+# Build stage
+FROM golang:alpine as builder
+
 COPY httpenv.go /go
 RUN go build httpenv.go
 
+# Final stage
 FROM alpine
+
+# Create a non-root user and group to run the application
 RUN addgroup -g 1000 httpenv \
     && adduser -u 1000 -G httpenv -D httpenv
-COPY --from=0 --chown=httpenv:httpenv /go/httpenv /httpenv
+
+# Copy the compiled binary from the builder stage and set permissions
+COPY --from=builder --chown=httpenv:httpenv /go/httpenv /httpenv
+
+# Install curl for debugging purposes
 RUN apk add --no-cache curl
+
+# Expose the port the application will listen on
 EXPOSE 8888
-# we're not changing user in this example, but you could:
-# USER httpenv
+
 CMD ["/httpenv"]
