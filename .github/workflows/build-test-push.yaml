@@ -42,7 +42,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           push: true
-          tags: $GHCR_PATH/$APP_NAME:${{ github.run_id }}
+          tags: ${{GHCR_PATH}}/${{APP_NAME}}:${{ github.run_id }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
           platforms: linux/amd64
