@@ -247,7 +247,7 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           images: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/httpenv
+            ${{ secrets.DOCKERHUB_USERNAME }}/sport-news/httpenv
             ghcr.io/vladislav-chunikhin/httpenv
           flavor: |
             latest=false
